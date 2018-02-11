@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>主页</title>
+    <style type="text/css">
+        .caozuo{
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 400px;
+            background-color: #ccc;
+            width: 100%;
+        }
+        .caozuo input{
+            font-size: 30px;
+        }
+        .caozuo input[type=text]{
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<h1>小小聊天室 欢迎：<span id="nickname"></span></h1>
+<div>
+    <ul class="chat_window">
+
+    </ul>
+</div>
+
+<button>添加表情</button>
+<div  class="caozuo" contenteditable="true">
+    <img src="/111.png">
+</div>
+
+
+
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="/js/jquery-1.11.1.js"></script>
+<script type="text/javascript">
+    var socket = io("ws://localhost:3000");
+    $(".caozuo").keydown(function(e){
+        if(e.keyCode == 13){
+            //把文本框的内容上传：
+            socket.emit("chat",{
+                "content" : $(".caozuo").html(),
+                "nickname" : $("#nickname").html(),
+                "to":"123"
+            });
+            $(this).html("");
+        }
+    });
+
+    socket.emit('group1');
+
+    socket.on("chat",function(msg){
+        $(".chat_window").prepend("<li><b>" + msg.nickname + "：</b>"+ msg.content + "</li>");
+    });
+    $.get("/getUser",function(data){
+
+        $("#nickname").html(data.nickname);
+        socket.emit('username',data.username);
+    })
+</script>
+</body>
+</html>

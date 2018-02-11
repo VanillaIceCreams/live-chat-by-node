@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>聊天室</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <script src="/js/jquery-1.11.1.js"></script>
+    <script src="/bootstrap/js/bootstrap.js"></script>
+    <script src="/js/main.js"></script>
+
+</head>
+<body>
+<div class="jumbotron">
+    <h1 style="text-align: center">小小聊天室</h1>
+
+</div>
+<div class="container">
+    <div class="row container-relative" id="container-relative">
+        <div class="col-xs-2 left-list-window">
+            <div class="left-list">
+                <ul class="list-group friend-list" id="left-friend-list">
+
+                </ul>
+            </div>
+        </div>
+
+        <div class='col-xs-10 right-container' data-friend=''>
+            <div class='right-top-window'>
+                <div class='chat-window' >
+
+                </div>
+            </div>
+            <div class='right-bottom-window'>
+                <div class='edit-window'>
+                    <div class='tools'>
+                        <span class='glyphicon glyphicon-heart-empty' aria-hidden='true'  data-toggle='modal' data-target='#feelingModal' onclick='getFeeling()'></span>
+                        <span class='glyphicon glyphicon-new-window' aria-hidden='true' data-toggle='modal' data-target='#feelingUploadModal'></span>
+                    </div>
+                    <div class='input-window' contenteditable='true'>
+                        <!--聊天输入框-->
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 下边缘选项卡 -->
+<section class="bottom-tab">
+    <div class="col-xs-2 tab1 tab" data-toggle="modal" data-target="#userMessageModal"></div>
+    <div class="col-xs-2 tab2 tab" id="findUserTab" data-toggle="modal" data-target="#findUserModal" onclick="findUser()"></div>
+    <div class="col-xs-2 tab3 tab"></div>
+    <div class="col-xs-2 tab4 tab"></div>
+    <div class="col-xs-2 tab5 tab"></div>
+</section>
+<!-- 模态框—上传表情 -->
+<div class="modal fade" id="feelingUploadModal" tabindex="-1" role="dialog" aria-labelledby="feelingUploadLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="feelingUploadLabel">上传图片</h4>
+            </div>
+            <div class="modal-body">
+                <form action="/uploadFeeling" enctype="multipart/form-data" id="feelingUploadForm">
+                    <input type="file" name="feeling">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="feelingUpload()">上传</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 模态框—表情包 -->
+<div class="modal fade" id="feelingModal" tabindex="-1" role="dialog" aria-labelledby="feelingLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="feelingLabel">表情包</h4>
+            </div>
+            <div class="modal-body">
+                <div class="feelingContainer" id="feelingContainer">
+                    <!--表情包-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 模态框—个人资料 -->
+<div class="modal fade" id="userMessageModal" tabindex="-1" role="dialog" aria-labelledby="userMessageLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="userMessageLabel">个人信息</h4>
+            </div>
+            <div class="modal-body">
+                <div >
+                    <label>头　像:</label>
+                    <img id="userhead">
+                </div>
+                <div>
+                    <label>用户账号:</label><span id="username"></span>
+                </div>
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="nickname">昵　　称:</label>
+                        <input type="text" class="form-control" name="nickname" id="nickname" placeholder="昵　称">
+                        <span style="display: none" id="nickname-hidden"></span>
+                    </div>
+                    <button type="button" class="btn btn-default"  onclick="updataUserNickName()">修改昵称</button>
+                </form>
+                <form class="form-inline" enctype="multipart/form-data" id="userheadForm">
+                    <div class="form-group">
+                        <label for="userheadInput">上传头像:</label>
+                        <input type="file" class="form-control" name="userhead" id="userheadInput" >
+                    </div>
+                    <button type="button" class="btn btn-default" onclick="uploadUserhead()">上传头像</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 模态框—找人 -->
+<div class="modal fade" id="findUserModal" tabindex="-1" role="dialog" aria-labelledby="findUserLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="findUserLabel">添加好友</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-inline findUserForm" >
+                    <input type="text" class="form-control" placeholder="不填则查找所有人" id="findUserInput">
+                    <button type="button" class="btn btn-default" onclick="findUser()">搜索</button>
+                </form>
+                <div class="findUserContainer">
+                    <ul class="list-group friend-list" id="friend-list">
+                        <!--ajax插入用户数据-->
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 模态框—暂时不写 -->
+</body>
+
+
+
+
+
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+<script type="text/javascript">
+    var socket = io("ws://localhost:3000");
+    setTimeout(function () {
+        socket.emit("username",$("#username").html());
+    },3000);
+
+
+    function sendMessage(e){
+        if(e.keyCode == 13) {
+            var content = $(".active .input-window").html();
+            if (content != "") {
+                //把文本框的内容上传：
+                socket.emit("chat", {
+                    "content": content,
+                    "username": $("#username").html(),
+                    "to": $("div.active").attr("data-friendUserName"),
+                    "nickname": $("#nickname-hidden").html(),
+                    "userhead": $("#userhead").attr("src")
+                });
+
+
+                $(".active .chat-window").append("<div class='message-container'>" +
+                        "<span class='message-username'>" + $("#nickname-hidden").html() + "</span>" +
+                        "<div>" +
+                        "<img src=" + $("#userhead").attr("src") + " class='message-head'>" +
+                        "<div class='message-body'>" +
+                        content +
+                        "</div>" +
+                        "</div>" +
+                        "</div>");
+
+                $(".active .input-window").html("");
+            }
+        }
+    }
+    socket.on("chat",function(msg){
+        console.log(msg)
+        $("div[data-friendUserName="+msg.username+"] .chat-window").append("<div class='message-container'>"+
+                "<span class='message-username'>"+msg.nickname+"</span>"+
+                "<div>"+
+                "<img src="+msg.userhead+" class='message-head'>"+
+                "<div class='message-body'>"+
+                    msg.content+
+                "</div>"+
+                "</div>"+
+                "</div>");
+    });
+
+
+</script>
+
+
+
+</html>

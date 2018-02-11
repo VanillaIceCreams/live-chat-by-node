@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>聊天室</title>
+    <link rel="stylesheet" href="./public/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="./public/css/main.css">
+    <script src="./public/js/jquery-1.11.1.js"></script>
+    <script src="./public/bootstrap/js/bootstrap.js"></script>
+    <script src="./public/js/main.js"></script>
+
+</head>
+<body>
+
+<div class="container">
+    <div class="row container-relative">
+        <div class="col-xs-2 left-list-window">
+            <div class="left-list">
+                <ul class="list-group friend-list" id="left-friend-list">
+
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-xs-10 right-container active" data-friend="Mik1">
+            <div class="right-top-window">
+                <div class="chat-window" >
+
+                </div>
+            </div>
+            <div class="right-bottom-window">
+                <!--表情-->
+                <div class="feelings" id="feelings">
+                    <img src="111.png"> <img src="111.png"> <img src="111.png"> <img src="111.png">
+                </div>
+                <div class="edit-window">
+                    <div class="tools">
+                        <span class="glyphicon glyphicon-heart-empty" aria-hidden="true" id="getFeelings"></span>
+                        <span class="glyphicon glyphicon-new-window" aria-hidden="true" data-toggle="modal" data-target="#feelingUploadModal"></span>
+                    </div>
+                    <div class="input-window" contenteditable="true">
+                        <img src="111.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 下边缘选项卡 -->
+<section class="bottom-tab">
+    <div class="col-xs-2 tab1 tab" data-toggle="modal" data-target="#userMessageModal"></div>
+    <div class="col-xs-2 tab2 tab" id="findUserTab" data-toggle="modal" data-target="#findUserModal" onclick="findUser()"></div>
+    <div class="col-xs-2 tab3 tab"></div>
+    <div class="col-xs-2 tab4 tab"></div>
+    <div class="col-xs-2 tab5 tab"></div>
+</section>
+<!-- 模态框—上传表情 -->
+<div class="modal fade" id="feelingUploadModal" tabindex="-1" role="dialog" aria-labelledby="feelingUploadLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="feelingUploadLabel">上传图片</h4>
+            </div>
+            <div class="modal-body">
+                <input type="file" >
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary">上传</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 模态框—个人资料 -->
+<div class="modal fade" id="userMessageModal" tabindex="-1" role="dialog" aria-labelledby="userMessageLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="userMessageLabel">个人信息</h4>
+            </div>
+            <div class="modal-body">
+                <div >
+                    <label>头　像:</label>
+                    <img id="userhead">
+                </div>
+                <div>
+                    <label>用户账号:</label><span id="username"></span>
+                </div>
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="nickname">昵　　称:</label>
+                        <input type="text" class="form-control" name="nickname" id="nickname" placeholder="昵　称">
+                    </div>
+                    <button type="button" class="btn btn-default"  onclick="updataUserNickName()">修改昵称</button>
+                </form>
+                <form class="form-inline" enctype="multipart/form-data" id="userheadForm">
+                    <div class="form-group">
+                        <label for="userheadInput">上传头像:</label>
+                        <input type="file" class="form-control" name="userhead" id="userheadInput" >
+                    </div>
+                    <button type="button" class="btn btn-default" onclick="uploadUserhead()">上传头像</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 模态框—找人 -->
+<div class="modal fade" id="findUserModal" tabindex="-1" role="dialog" aria-labelledby="findUserLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="findUserLabel">添加好友</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-inline findUserForm" >
+                    <input type="text" class="form-control" placeholder="不填则查找所有人" id="findUserInput">
+                    <button type="button" class="btn btn-default" onclick="findUser()">搜索</button>
+                </form>
+                <div class="findUserContainer">
+                    <ul class="list-group friend-list" id="friend-list">
+                        <!--ajax插入用户数据-->
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer ">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 模态框—暂时不写 -->
+</body>
+<script>
+
+    //发消息
+    $(".input-window").keydown(function(e){
+        if(e.keyCode == 13) {
+            $(".chat-window").append("<div class='message-container'>"+
+                    "<span class='message-username'>香草冰激凌</span>"+
+                    "<div>"+
+                    "<img src='111.png' class='message-head'>"+
+                    "<div class='message-body'>"+
+                    $(this).html()+
+                    "</div>"+
+                    "</div>"+
+                    "</div>");
+
+            $(this).html("");
+        }
+    });
+    //找表情
+    $("#getFeelings").click(function(event){
+        if($("#feelings").css("display")=="none"){
+            $("#feelings").show();
+        }else{
+            $("#feelings").hide();
+        }
+        event.stopPropagation();
+    });
+    $("body").click(function(){
+        $("#feelings").hide();
+    });
+    //切换聊天对象
+    $(".friend-list li").click(function(){
+        $(".friend-list li").removeClass("active");
+        $(this).addClass("active");
+//        $(".right-container").removeClass("active");
+//        $("[data-friend="+ $(this).text()+"]").addClass("active");
+    });
+
+
+    //显示tab栏动画
+    $(".tab").mouseover(function(){
+        if($(this).is(":animated")){
+            return;
+        }
+        $(this).animate({
+            width: "300px"
+        }, 500 );
+    });
+    $(".tab").mouseleave(function(){
+        if($(this).is(":animated")){
+            $(this).stop();
+        }
+        $(this).animate({
+            width: "30px"
+        }, 500)
+    });
+
+
+</script>
+</html>
